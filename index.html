@@ -1199,6 +1199,7 @@
             
             if (gameState.multiplicar_click_por_gb && now - gameState.last_time >= 1000) { // 2 minutes
                 gameState.click += stonks*2;
+                gameState.last_time = now;
                 
                 // Check if golden berges bonus should expire
                 if (now - gameState.last_time_multiplicar >= 120000) { // 2 minutes
