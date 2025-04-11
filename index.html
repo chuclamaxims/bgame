@@ -94,7 +94,6 @@
             position: absolute;
             font-size: 16px;
             color: white;
-            background-color: rgba(0, 0, 0, 0.7);
             padding: 5px;
             border-radius: 5px;
         }
@@ -458,7 +457,8 @@
             multiplicar_click_por_gb: false,
             last_time_multiplicar_click_por_gb: 0,
             last_time_multiplicar: 0,
-            last_time: 0
+            last_time: 0,
+            last_autosave: 0
         };
         
         // DOM Elements
@@ -909,6 +909,7 @@
             const pointerShopBtn = document.createElement('button');
             pointerShopBtn.textContent = 'Pointer Shop';
             pointerShopBtn.style.margin = '20px';
+            pointerShopBtn.className = 'button';
             pointerShopBtn.addEventListener('click', function() {
                 openPointerShop();
             });
@@ -1095,6 +1096,13 @@
                 alert("Game saved");
             }
         }
+
+        function autoSave() {
+            localStorage.setItem('bergesGameSave', JSON.stringify(gameState));
+            localStorage.setItem('playerName', gameState.playerName);
+            localStorage.setItem('alert_1_milion', gameState.alert_1_milion);
+            localStorage.setItem('the_end', gameState.the_end);
+        }
         
         function loadGame() {
             const savedGame = localStorage.getItem('bergesGameSave');
@@ -1209,6 +1217,11 @@
             } else if (now - gameState.last_time >= 1000) { // 1 second
                 gameState.click += stonks;
                 gameState.last_time = now;
+            }
+
+            if (now - gameState.last_autosave >= 5000) {
+                autoSave();
+                gameState.last_autosave = now;
             }
             
             // Golden berges spawn
