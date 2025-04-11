@@ -458,7 +458,7 @@
             last_time_multiplicar_click_por_gb: 0,
             last_time_multiplicar: 0,
             last_time: 0,
-            last_autosave: 0
+            last_autosave: 10000
         };
         
         // DOM Elements
@@ -544,10 +544,9 @@
             
             // Set up event listeners
             setupEventListeners();
-            
-            // Start game loop
-            gameLoop();
-            
+
+            const gameInterval = setInterval(gameLoop, 1000 / 60);
+
             // Ask for player name if not saved
             if (!localStorage.getItem('playerName')) {
                 const name = prompt("What is your name?") || "Player";
@@ -1096,13 +1095,6 @@
                 alert("Game saved");
             }
         }
-
-        function autoSave() {
-            localStorage.setItem('bergesGameSave', JSON.stringify(gameState));
-            localStorage.setItem('playerName', gameState.playerName);
-            localStorage.setItem('alert_1_milion', gameState.alert_1_milion);
-            localStorage.setItem('the_end', gameState.the_end);
-        }
         
         function loadGame() {
             const savedGame = localStorage.getItem('bergesGameSave');
@@ -1191,75 +1183,77 @@
         }
         
         function gameLoop() {
-            // Passive income
-            const now = Date.now();
-            const stonks = 1 * gameState.buenosvinos_comprados + 
-                          5 * gameState.alemany_comprados + 
-                          50 * gameState.porqueres_comprados + 
-                          100 * gameState.duo_galactico_comprados +
-                          200 * gameState.romero_comprados +
-                          500 * gameState.ansorena_comprados +
-                          1000 * gameState.monge_comprados +
-                          2000 * gameState.buruaga_comprados +
-                          5000 * gameState.prat_comprados +
-                          12000 * gameState.chopinet_comprados +
-                          25000 * gameState.duo_historico_comprados;
+        // Passive income
+        const now = Date.now();
+        const stonks = 1 * gameState.buenosvinos_comprados + 
+                      5 * gameState.alemany_comprados + 
+                      50 * gameState.porqueres_comprados + 
+                      100 * gameState.duo_galactico_comprados +
+                      200 * gameState.romero_comprados +
+                      500 * gameState.ansorena_comprados +
+                      1000 * gameState.monge_comprados +
+                      2000 * gameState.buruaga_comprados +
+                      5000 * gameState.prat_comprados +
+                      12000 * gameState.chopinet_comprados +
+                      25000 * gameState.duo_historico_comprados;
+        
+        if (gameState.multiplicar_click_por_gb && now - gameState.last_time >= 1000) { // 2 minutes
+            gameState.click += stonks*2;
+            gameState.last_time = now;
             
-            if (gameState.multiplicar_click_por_gb && now - gameState.last_time >= 1000) { // 2 minutes
-                gameState.click += stonks*2;
-                gameState.last_time = now;
-                
-                // Check if golden berges bonus should expire
-                if (now - gameState.last_time_multiplicar >= 120000) { // 2 minutes
-                    gameState.multiplicar_click_por_gb = false;
-                    gameState.last_time_multiplicar = now;
-                }
-            } else if (now - gameState.last_time >= 1000) { // 1 second
-                gameState.click += stonks;
-                gameState.last_time = now;
+            // Check if golden berges bonus should expire
+            if (now - gameState.last_time_multiplicar >= 120000) { // 2 minutes
+                gameState.multiplicar_click_por_gb = false;
+                gameState.last_time_multiplicar = now;
             }
-
-            if (now - gameState.last_autosave >= 5000) {
-                autoSave();
-                gameState.last_autosave = now;
-            }
-            
-            // Golden berges spawn
-            if (gameState.golden_berges_spawn) {
-                goldenBerges.style.display = 'block';
-                goldenBerges.style.left = `${gameState.gb_x}px`;
-                goldenBerges.style.top = `${gameState.gb_y}px`;
-                
-                if (now - gameState.last_time_gb >= 7000) { // 7 seconds
-                    gameState.last_time_gb = now;
-                    gameState.gb_x = Math.random() * (gameContainer.offsetWidth - 50);
-                    gameState.gb_y = Math.random() * (gameContainer.offsetHeight - 50);
-                    gameState.golden_berges_spawn = false;
-                    goldenBerges.style.display = 'none';
-                }
-            } else {
-                // Random chance to spawn golden berges
-                if (Math.random() < 0.0001) { // Adjust probability as needed
-                    gameState.golden_berges_spawn = true;
-                    gameState.gb_x = Math.random() * (gameContainer.offsetWidth - 50);
-                    gameState.gb_y = Math.random() * (gameContainer.offsetHeight - 50);
-                    gameState.last_time_gb = now;
-                }
-            }
-            
-            // Berges rotation animation
-            if (gameState.berges_animation) {
-                gameState.angulo += gameState.velocidad_angulo_variable;
-                if (gameState.angulo >= 360) {
-                    gameState.angulo = 0;
-                    gameState.berges_animation = false;
-                }
-                bergesImg.style.transform = `rotate(${gameState.angulo}deg)`;
-            }
-            
-            updateUI();
-            requestAnimationFrame(gameLoop);
+        } else if (now - gameState.last_time >= 1000) { // 1 second
+            gameState.click += stonks;
+            gameState.last_time = now;
         }
+
+        if (now - gameState.last_autosave >= 5000) {
+            localStorage.setItem('bergesGameSave', JSON.stringify(gameState));
+            localStorage.setItem('playerName', gameState.playerName);
+            localStorage.setItem('alert_1_milion', gameState.alert_1_milion);
+            localStorage.setItem('the_end', gameState.the_end);
+            gameState.last_autosave = now;
+        }
+        
+        // Golden berges spawn
+        if (gameState.golden_berges_spawn) {
+            goldenBerges.style.display = 'block';
+            goldenBerges.style.left = `${gameState.gb_x}px`;
+            goldenBerges.style.top = `${gameState.gb_y}px`;
+            
+            if (now - gameState.last_time_gb >= 7000) { // 7 seconds
+                gameState.last_time_gb = now;
+                gameState.gb_x = Math.random() * (gameContainer.offsetWidth - 50);
+                gameState.gb_y = Math.random() * (gameContainer.offsetHeight - 50);
+                gameState.golden_berges_spawn = false;
+                goldenBerges.style.display = 'none';
+            }
+        } else {
+            // Random chance to spawn golden berges
+            if (Math.random() < 0.0001) { // Adjust probability as needed
+                gameState.golden_berges_spawn = true;
+                gameState.gb_x = Math.random() * (gameContainer.offsetWidth - 50);
+                gameState.gb_y = Math.random() * (gameContainer.offsetHeight - 50);
+                gameState.last_time_gb = now;
+            }
+        }
+        
+        // Berges rotation animation
+        if (gameState.berges_animation) {
+            gameState.angulo += gameState.velocidad_angulo_variable;
+            if (gameState.angulo >= 360) {
+                gameState.angulo = 0;
+                gameState.berges_animation = false;
+            }
+            bergesImg.style.transform = `rotate(${gameState.angulo}deg)`;
+        }
+        
+        updateUI();
+    }
         
         // Disable context menu for right-click functionality
         document.addEventListener('contextmenu', function(e) {
