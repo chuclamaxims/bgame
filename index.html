@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Berges Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #222;
+            color: white;
+            overflow: hidden;
+        }
+
+        .blur-background #game-container {
+            filter: blur(20px);
+            transition: filter 0.3s ease;
+        }
+        
+        #password-modal {
+            backdrop-filter: blur(3px);
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        
+        #game-container {
+            position: relative;
+            width: 800px;
+            height: 600px;
+            margin: 20px auto;
+            background-size: cover;
+            border: 2px solid #444;
+        }
+        
+        #click-counter {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        #income-display {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .character {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        
+        .character:hover {
+            transform: scale(1.05);
+        }
+        
+        .character:active {
+            transform: scale(0.95);
+        }
+        
+        #berges {
+            top: 100px;
+            left: 10px;
+        }
+        
+        #buenosvinos {
+            top: 100px;
+            left: 400px;
+        }
+        
+        #alemany {
+            top: 220px;
+            left: 400px;
+        }
+        
+        #porqueres {
+            top: 340px;
+            left: 400px;
+        }
+        
+        #duo-galactico {
+            top: 460px;
+            left: 400px;
+        }
+        
+        .upgrade-info {
+            position: absolute;
+            font-size: 16px;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 5px;
+            border-radius: 5px;
+        }
+        
+        #buenosvinos-info {
+            top: 140px;
+            left: 500px;
+        }
+        
+        #alemany-info {
+            top: 260px;
+            left: 500px;
+        }
+        
+        #porqueres-info {
+            top: 360px;
+            left: 500px;
+        }
+        
+        #duo-galactico-info {
+            top: 500px;
+            left: 500px;
+        }
+        
+        .button {
+            position: absolute;
+            background-color: #0080ff;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .button:hover {
+            background-color: #0066cc;
+        }
+        
+        #bonus-code-btn {
+            top: 450px;
+            left: 20px;
+        }
+        
+        #shop-btn {
+            top: 500px;
+            left: 20px;
+        }
+        
+        #settings-btn {
+            top: 550px;
+            left: 20px;
+        }
+        
+        #golden-berges {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            display: none;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(2px);
+        }
+        
+        .modal-content {
+            background-color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #ff0000;
+        }
+        
+        .shop-item {
+            display: inline-block;
+            width: 120px;
+            margin: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        
+        .shop-item:hover {
+            transform: scale(1.05);
+        }
+        
+        .shop-item:active {
+            transform: scale(0.95);
+        }
+        
+        .shop-item-img {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 5px;
+        }
+        
+        .shop-item-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .shop-item-price {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .shop-item-owned {
+            font-size: 14px;
+        }
+        
+        #password-modal {
+            display: flex;
+        }
+        
+        #password-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        #password-input {
+            padding: 8px;
+            font-size: 16px;
+        }
+        
+        #password-submit {
+            padding: 8px;
+            font-size: 16px;
+            background-color: #0080ff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        #password-submit:hover {
+            background-color: #0066cc;
+        }
+        
+        .back-button {
+            margin-top: 20px;
+            padding: 8px 15px;
+            background-color: #0080ff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .back-button:hover {
+            background-color: #0066cc;
+        }
+        
+        .settings-option {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #444;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .settings-option:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+    <!-- Password Modal -->
+    <div id="password-modal" class="modal">
+        <div class="modal-content">
+            <h2>Enter Password</h2>
+            <form id="password-form">
+                <input type="password" id="password-input" placeholder="Password">
+                <button type="submit" id="password-submit">Submit</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Main Game Container -->
+    <div id="game-container">
+        <div id="click-counter">Aula Coins (A$) : 0</div>
+        <div id="income-display">+ 0 A$/s</div>
+        
+        <!-- Characters -->
+        <img id="berges" class="character" src="img/berges.png" alt="Berges">
+        <img id="buenosvinos" class="character" src="img/buenosvino.png" alt="Buenosvinos">
+        <img id="alemany" class="character" src="img/alemany.png" alt="Alemany">
+        <img id="porqueres" class="character" src="img/porqueres.png" alt="Porqueres">
+        <img id="duo-galactico" class="character" src="img/duo_galactico.png" alt="Duo Galactico">
+        
+        <!-- Upgrade Info -->
+        <div id="buenosvinos-info" class="upgrade-info">
+            Buenosvinos (+1 A$/s): 300 A$<br>
+            Adquired: 0
+        </div>
+        <div id="alemany-info" class="upgrade-info">
+            Alemany (+5 A$/s): 1450 A$<br>
+            Adquired: 0
+        </div>
+        <div id="porqueres-info" class="upgrade-info">
+            Porqueres (+50 A$/s): 14000 A$<br>
+            Adquired: 0
+        </div>
+        <div id="duo-galactico-info" class="upgrade-info">
+            Duo Galactico (+100 A$/s): 25000 A$<br>
+            Adquired: 0
+        </div>
+        
+        <!-- Buttons -->
+        <button id="bonus-code-btn" class="button">Bonus Code</button>
+        <button id="shop-btn" class="button">Shop</button>
+        <button id="settings-btn" class="button">Settings</button>
+        
+        <!-- Golden Berges -->
+        <img id="golden-berges" src="img/golden_berges.png" alt="Golden Berges">
+    </div>
+    
+    <!-- Shop Modal -->
+    <div id="shop-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">Shop</div>
+            <div id="shop-items-container"></div>
+            <button class="back-button" id="shop-back-btn">Back</button>
+        </div>
+    </div>
+    
+    <!-- Pointer Shop Modal -->
+    <div id="pointer-shop-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">Pointer Shop</div>
+            <div id="pointer-shop-items-container"></div>
+            <button class="back-button" id="pointer-shop-back-btn">Back</button>
+        </div>
+    </div>
+    
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">Settings</div>
+            <div class="settings-option" id="sound-option">Sound Click Berges</div>
+            <div class="settings-option" id="music-option">Music</div>
+            <div class="settings-option" id="volume-option">Volume</div>
+            <div class="settings-option" id="info-option">Info</div>
+            <div class="settings-option" id="save-option">Save</div>
+            <div class="settings-option" id="delete-option">Delete all data</div>
+            <button class="back-button" id="settings-back-btn">Back</button>
+        </div>
+    </div>
+    
+    <!-- Bonus Code Modal -->
+    <div id="bonus-code-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">Bonus Code</div>
+            <input type="text" id="bonus-code-input" placeholder="Enter your bonus code">
+            <button id="bonus-code-submit">Submit</button>
+            <button class="back-button" id="bonus-code-back-btn">Back</button>
+        </div>
+    </div>
+    
+    <!-- Volume Modal -->
+    <div id="volume-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">Volume</div>
+            <p>Enter the volume of the music (Between 0 and 10)</p>
+            <input type="number" id="volume-input" min="0" max="10" value="5">
+            <button id="volume-submit">Submit</button>
+            <button class="back-button" id="volume-back-btn">Back</button>
+        </div>
+    </div>
+    
+    <!-- Admin Site Modal -->
+    <div id="admin-site-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title" style="color: red;">Admin Site</div>
+            <button id="give-coins-btn">Give Coins</button>
+            <button class="back-button" id="admin-site-back-btn">Back</button>
+        </div>
+    </div>
+    
+    <!-- Audio Elements -->
+    <audio id="punch-sound" src="img/punch.mp3"></audio>
+    <audio id="music" loop></audio>
+    
+    <script>
+        // Game state
+        const gameState = {
+            click: 0,
+            playerName: "Player",
+            asound: false,
+            amusic: true,
+            volume: 0,
+            use_beteran: false,
+            use_finish_game: false,
+            use_admin_goat: false,
+            alert_1_milion: false,
+            the_end: false,
+            berges_animation: false,
+            angulo: 0,
+            velocidad_angulo_variable: 0,
+            berges_gira_click: false,
+            
+            // Upgrades
+            buenosvinos_comprados: 0,
+            precio_buenosvinos: 300,
+            
+            alemany_comprados: 0,
+            precio_alemany: 1450,
+            
+            porqueres_comprados: 0,
+            precio_porqueres: 14000,
+            
+            duo_galactico_comprados: 0,
+            precio_duo_galactico: 25000,
+            
+            romero_comprados: 0,
+            precio_romero: 45000,
+            
+            ansorena_comprados: 0,
+            precio_ansorena: 100000,
+            
+            monge_comprados: 0,
+            precio_monge: 180000,
+            
+            buruaga_comprados: 0,
+            precio_buruaga: 360000,
+            
+            prat_comprados: 0,
+            precio_prat: 875000,
+            
+            chopinet_comprados: 0,
+            precio_chopinet: 1750000,
+            
+            duo_historico_comprados: 0,
+            precio_duo_historico: 3500000,
+            
+            puntero1_adquirido: false,
+            puntero1_adquiridos: 0,
+            
+            // Golden Berges
+            golden_berges_spawn: false,
+            gb_x: 0,
+            gb_y: 0,
+            last_time_gb: 0,
+            multiplicar_click_por_gb: false,
+            last_time_multiplicar_click_por_gb: 0,
+            last_time_multiplicar: 0,
+            last_time: 0
+        };
+        
+        // DOM Elements
+        const gameContainer = document.getElementById('game-container');
+        const clickCounter = document.getElementById('click-counter');
+        const incomeDisplay = document.getElementById('income-display');
+        const bergesImg = document.getElementById('berges');
+        const buenosvinosImg = document.getElementById('buenosvinos');
+        const alemanyImg = document.getElementById('alemany');
+        const porqueresImg = document.getElementById('porqueres');
+        const duoGalacticoImg = document.getElementById('duo-galactico');
+        const goldenBerges = document.getElementById('golden-berges');
+        
+        // Upgrade info elements
+        const buenosvinosInfo = document.getElementById('buenosvinos-info');
+        const alemanyInfo = document.getElementById('alemany-info');
+        const porqueresInfo = document.getElementById('porqueres-info');
+        const duoGalacticoInfo = document.getElementById('duo-galactico-info');
+        
+        // Buttons
+        const bonusCodeBtn = document.getElementById('bonus-code-btn');
+        const shopBtn = document.getElementById('shop-btn');
+        const settingsBtn = document.getElementById('settings-btn');
+        
+        // Modals
+        const passwordModal = document.getElementById('password-modal');
+        const shopModal = document.getElementById('shop-modal');
+        const pointerShopModal = document.getElementById('pointer-shop-modal');
+        const settingsModal = document.getElementById('settings-modal');
+        const bonusCodeModal = document.getElementById('bonus-code-modal');
+        const volumeModal = document.getElementById('volume-modal');
+        const adminSiteModal = document.getElementById('admin-site-modal');
+        
+        // Audio
+        const punchSound = document.getElementById('punch-sound');
+        const music = document.getElementById('music');
+        
+        const SAL = "SERHB5567";
+        const HASH_CORRECTO = "aecb33910df397a5bc82a78cdc8de99f539213799a6c1e5a230f24594e6e7a6b";
+
+        // Función para verificar la contraseña
+        async function verificarContraseña(input) {
+            try {
+                const contraseñaConSal = input + SAL;
+                
+                const encoder = new TextEncoder();
+                const data = encoder.encode(contraseñaConSal);
+                const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+                
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                const hashHex = hashArray.map(b => 
+                b.toString(16).padStart(2, '0')
+                ).join('');
+                
+                return hashHex === HASH_CORRECTO;
+                
+            } catch (error) {
+                console.error("Error en verificación:", error);
+                return false;
+            }
+        }
+
+        document.getElementById('password-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const password = document.getElementById('password-input').value;
+            
+            const esValida = await verificarContraseña(password);
+            
+            if (esValida) {
+                passwordModal.style.display = 'none';
+                document.body.classList.remove('blur-background');
+                initGame();
+            } else {
+                alert("Contraseña incorrecta");
+                window.close(); // Cierra la ventana
+            }
+        });
+        
+        // Initialize game after password check
+        function initGame() {
+            // Load saved game
+            loadGame();
+            
+            // Set up event listeners
+            setupEventListeners();
+            
+            // Start game loop
+            gameLoop();
+            
+            // Ask for player name if not saved
+            if (!localStorage.getItem('playerName')) {
+                const name = prompt("What is your name?") || "Player";
+                gameState.playerName = name;
+                localStorage.setItem('playerName', name);
+            } else {
+                gameState.playerName = localStorage.getItem('playerName');
+            }
+            
+            alert("Click Berges and buy upgrades!!");
+            
+            // Start music
+            playRandomMusic();
+        }
+        
+        function setupEventListeners() {
+            // Berges click
+            bergesImg.addEventListener('mousedown', function() {
+                addClick(1 + gameState.puntero1_adquiridos);
+                if (gameState.berges_gira_click) {
+                    gameState.berges_animation = true;
+                }
+                if (gameState.asound) {
+                    punchSound.currentTime = 0;
+                    punchSound.play();
+                }
+            });
+            
+            // Space bar click
+            document.addEventListener('keydown', function(e) {
+                if (e.code === 'Space') {
+                    addClick(1 + gameState.puntero1_adquiridos);
+                    if (gameState.berges_gira_click) {
+                        gameState.berges_animation = true;
+                    }
+                    if (gameState.asound) {
+                        punchSound.currentTime = 0;
+                        punchSound.play();
+                    }
+                }
+            });
+            
+            // Upgrade clicks
+            buenosvinosImg.addEventListener('mousedown', function(e) {
+                if (e.button === 2) { // Right click
+                    sellItem('buenosvinos');
+                } else {
+                    buyUpgrade('buenosvinos', gameState.precio_buenosvinos, 1);
+                }
+            });
+            
+            alemanyImg.addEventListener('mousedown', function(e) {
+                if (e.button === 2) {
+                    sellItem('alemany');
+                } else {
+                    buyUpgrade('alemany', gameState.precio_alemany, 5);
+                }
+            });
+            
+            porqueresImg.addEventListener('mousedown', function(e) {
+                if (e.button === 2) {
+                    sellItem('porqueres');
+                } else {
+                    buyUpgrade('porqueres', gameState.precio_porqueres, 50);
+                }
+            });
+            
+            duoGalacticoImg.addEventListener('mousedown', function(e) {
+                if (e.button === 2) {
+                    sellItem('duo_galactico');
+                } else {
+                    buyUpgrade('duo_galactico', gameState.precio_duo_galactico, 100);
+                }
+            });
+            
+            // Golden berges click
+            goldenBerges.addEventListener('click', function() {
+                gameState.multiplicar_click_por_gb = true;
+                gameState.last_time_multiplicar = Date.now();
+                goldenBerges.style.display = 'none';
+                gameState.golden_berges_spawn = false;
+            });
+            
+            // Button clicks
+            bonusCodeBtn.addEventListener('click', function() {
+                bonusCodeModal.style.display = 'flex';
+            });
+            
+            shopBtn.addEventListener('click', function() {
+                openShop();
+            });
+            
+            settingsBtn.addEventListener('click', function() {
+                settingsModal.style.display = 'flex';
+            });
+            
+            // Modal back buttons
+            document.getElementById('shop-back-btn').addEventListener('click', function() {
+                shopModal.style.display = 'none';
+            });
+            
+            document.getElementById('pointer-shop-back-btn').addEventListener('click', function() {
+                pointerShopModal.style.display = 'none';
+            });
+            
+            document.getElementById('settings-back-btn').addEventListener('click', function() {
+                settingsModal.style.display = 'none';
+            });
+            
+            document.getElementById('bonus-code-back-btn').addEventListener('click', function() {
+                bonusCodeModal.style.display = 'none';
+            });
+            
+            document.getElementById('volume-back-btn').addEventListener('click', function() {
+                volumeModal.style.display = 'none';
+            });
+            
+            document.getElementById('admin-site-back-btn').addEventListener('click', function() {
+                adminSiteModal.style.display = 'none';
+            });
+            
+            // Bonus code submit
+            document.getElementById('bonus-code-submit').addEventListener('click', function() {
+                const bonusCode = document.getElementById('bonus-code-input').value;
+                handleBonusCode(bonusCode);
+            });
+            
+            // Settings options
+            document.getElementById('sound-option').addEventListener('click', function() {
+                const enable = confirm("Do you want to hear the sound?");
+                gameState.asound = enable;
+            });
+            
+            document.getElementById('music-option').addEventListener('click', function() {
+                const enable = confirm("Do you want to hear the music?");
+                gameState.amusic = enable;
+                if (!enable) {
+                    music.pause();
+                } else {
+                    playRandomMusic();
+                }
+            });
+            
+            document.getElementById('volume-option').addEventListener('click', function() {
+                volumeModal.style.display = 'flex';
+            });
+            
+            document.getElementById('volume-submit').addEventListener('click', function() {
+                const volume = parseInt(document.getElementById('volume-input').value);
+                if (volume >= 0 && volume <= 10) {
+                    gameState.volume = volume / 10;
+                    music.volume = gameState.volume;
+                } else {
+                    alert("Invalid volume");
+                }
+                volumeModal.style.display = 'none';
+            });
+            
+            document.getElementById('info-option').addEventListener('click', function() {
+                showInfo();
+            });
+            
+            document.getElementById('save-option').addEventListener('click', function() {
+                saveGame();
+            });
+            
+            document.getElementById('delete-option').addEventListener('click', function() {
+                deleteAllData();
+            });
+            
+            // Admin site
+            document.getElementById('give-coins-btn').addEventListener('click', function() {
+                const amount = prompt("How many aula coins do you want to give?");
+                if (amount && !isNaN(amount)) {
+                    gameState.click += parseInt(amount);
+                    alert(`You have given ${amount} aula coins`);
+                    updateUI();
+                }
+            });
+        }
+        
+        function addClick(amount) {
+            gameState.click += amount;
+            updateUI();
+            checkMilestones();
+        }
+        
+        function buyUpgrade(type, price, income) {
+            if (gameState.click >= price) {
+                gameState.click -= price;
+                gameState[`${type}_comprados`] += 1;
+                gameState[`precio_${type}`] = Math.floor(gameState[`precio_${type}`] * 1.03);
+                updateUI();
+            } else {
+                alert("You don't have enough aula coins");
+            }
+        }
+        
+        function sellItem(item) {
+            switch(item) {
+                case 'buenosvinos':
+                    if (gameState.buenosvinos_comprados === 0) {
+                        alert("You don't have any buenosvinos");
+                        return;
+                    }
+                    gameState.click += 300;
+                    gameState.buenosvinos_comprados -= 1;
+                    gameState.precio_buenosvinos = Math.floor(gameState.precio_buenosvinos / 1.03);
+                    break;
+                case 'alemany':
+                    if (gameState.alemany_comprados === 0) {
+                        alert("You don't have any alemany");
+                        return;
+                    }
+                    gameState.click += 1450;
+                    gameState.alemany_comprados -= 1;
+                    gameState.precio_alemany = Math.floor(gameState.precio_alemany / 1.03);
+                    break;
+                case 'porqueres':
+                    if (gameState.porqueres_comprados === 0) {
+                        alert("You don't have any porqueres");
+                        return;
+                    }
+                    gameState.click += 14000;
+                    gameState.porqueres_comprados -= 1;
+                    gameState.precio_porqueres = Math.floor(gameState.precio_porqueres / 1.03);
+                    break;
+                case 'duo_galactico':
+                    if (gameState.duo_galactico_comprados === 0) {
+                        alert("You don't have any duo galactico");
+                        return;
+                    }
+                    gameState.click += 25000;
+                    gameState.duo_galactico_comprados -= 1;
+                    gameState.precio_duo_galactico = Math.floor(gameState.precio_duo_galactico / 1.03);
+                    break;
+                case 'romero':
+                    if (gameState.romero_comprados === 0) {
+                        alert("You don't have any romero");
+                        return;
+                    }
+                    gameState.click += 45000;
+                    gameState.romero_comprados -= 1;
+                    gameState.precio_romero = Math.floor(gameState.precio_romero / 1.03);
+                    break;
+                case 'ansorena':
+                    if (gameState.ansorena_comprados === 0) {
+                        alert("You don't have any ansorena");
+                        return;
+                    }
+                    gameState.click += 100000;
+                    gameState.ansorena_comprados -= 1;
+                    gameState.precio_ansorena = Math.floor(gameState.precio_ansorena / 1.03);
+                    break;
+                case 'monge':
+                    if (gameState.monge_comprados === 0) {
+                        alert("You don't have any monge");
+                        return;
+                    }
+                    gameState.click += 180000;
+                    gameState.monge_comprados -= 1;
+                    gameState.precio_monge = Math.floor(gameState.precio_monge / 1.03);
+                    break;
+                case 'buruaga':
+                    if (gameState.buruaga_comprados === 0) {
+                        alert("You don't have any buruaga");
+                        return;
+                    }
+                    gameState.click += 360000;
+                    gameState.buruaga_comprados -= 1;
+                    gameState.precio_buruaga = Math.floor(gameState.precio_buruaga / 1.03);
+                    break;
+                case 'prat':
+                    if (gameState.prat_comprados === 0) {
+                        alert("You don't have any prat");
+                        return;
+                    }
+                    gameState.click += 875000;
+                    gameState.prat_comprados -= 1;
+                    gameState.precio_prat = Math.floor(gameState.precio_prat / 1.03);
+                    break;
+                case 'chopinet':
+                    if (gameState.chopinet_comprados === 0) {
+                        alert("You don't have any chopinet");
+                        return;
+                    }
+                    gameState.click += 1750000;
+                    gameState.chopinet_comprados -= 1;
+                    gameState.precio_chopinet = Math.floor(gameState.precio_chopinet / 1.03);
+                    break;
+                case 'duo_historico':
+                    if (gameState.duo_historico_comprados === 0) {
+                        alert("You don't have any duo historico");
+                        return;
+                    }
+                    gameState.click += 3500000;
+                    gameState.duo_historico_comprados -= 1;
+                    gameState.precio_duo_historico = Math.floor(gameState.precio_duo_historico / 1.03);
+                    break;
+                case 'puntero1':
+                    if (!gameState.puntero1_adquirido) {
+                        alert("You don't have any puntero1");
+                        return;
+                    }
+                    gameState.click += 1000;
+                    gameState.puntero1_adquirido = false;
+                    break;
+                default:
+                    alert("ERROR, Try to contact the creator");
+            }
+            
+            updateUI();
+        }
+        
+        function updateUI() {
+            clickCounter.textContent = `Aula Coins (A$) : ${Math.floor(gameState.click)}`;
+            
+            // Update upgrade info
+            buenosvinosInfo.innerHTML = `Buenosvinos (+1 A$/s): ${gameState.precio_buenosvinos} A$<br>Adquired: ${gameState.buenosvinos_comprados}`;
+            alemanyInfo.innerHTML = `Alemany (+5 A$/s): ${gameState.precio_alemany} A$<br>Adquired: ${gameState.alemany_comprados}`;
+            porqueresInfo.innerHTML = `Porqueres (+50 A$/s): ${gameState.precio_porqueres} A$<br>Adquired: ${gameState.porqueres_comprados}`;
+            duoGalacticoInfo.innerHTML = `Duo Galactico (+100 A$/s): ${gameState.precio_duo_galactico} A$<br>Adquired: ${gameState.duo_galactico_comprados}`;
+            
+            // Update income display
+            const stonks = 1 * gameState.buenosvinos_comprados + 
+                          5 * gameState.alemany_comprados + 
+                          50 * gameState.porqueres_comprados + 
+                          100 * gameState.duo_galactico_comprados +
+                          200 * gameState.romero_comprados +
+                          500 * gameState.ansorena_comprados +
+                          1000 * gameState.monge_comprados +
+                          2000 * gameState.buruaga_comprados +
+                          5000 * gameState.prat_comprados +
+                          12000 * gameState.chopinet_comprados +
+                          25000 * gameState.duo_historico_comprados;
+            
+            if (gameState.multiplicar_click_por_gb) {
+                incomeDisplay.textContent = `+ ${stonks * 2} A$/s`;
+            } else {
+                incomeDisplay.textContent = `+ ${stonks} A$/s`;
+            }
+        }
+        
+        function openShop() {
+            shopModal.style.display = 'flex';
+            const container = document.getElementById('shop-items-container');
+            container.innerHTML = '';
+            
+            // Add shop items
+            addShopItem(container, 'romero', 'Romero', gameState.precio_romero, '+200 A$/s', gameState.romero_comprados);
+            addShopItem(container, 'ansorena', 'Ansorena', gameState.precio_ansorena, '+500 A$/s', gameState.ansorena_comprados);
+            addShopItem(container, 'monge', 'Monge', gameState.precio_monge, '+1000 A$/s', gameState.monge_comprados);
+            addShopItem(container, 'buruaga', 'Buruaga', gameState.precio_buruaga, '+2000 A$/s', gameState.buruaga_comprados);
+            addShopItem(container, 'prat', 'Prat', gameState.precio_prat, '+5000 A$/s', gameState.prat_comprados);
+            addShopItem(container, 'chopinet', 'Chopinet', gameState.precio_chopinet, '+12000 A$/s', gameState.chopinet_comprados);
+            addShopItem(container, 'duo_historico', 'Duo Historico', gameState.precio_duo_historico, '+25000 A$/s', gameState.duo_historico_comprados);
+            
+            // Add pointer shop button
+            const pointerShopBtn = document.createElement('button');
+            pointerShopBtn.textContent = 'Pointer Shop';
+            pointerShopBtn.style.margin = '20px';
+            pointerShopBtn.addEventListener('click', function() {
+                openPointerShop();
+            });
+            container.appendChild(pointerShopBtn);
+        }
+        
+        function addShopItem(container, id, name, price, income, owned) {
+            const item = document.createElement('div');
+            item.className = 'shop-item';
+            item.innerHTML = `
+                <img class="shop-item-img" src="img/${id}.png" alt="${name}">
+                <div class="shop-item-name">${name}</div>
+                <div class="shop-item-price">${income} - ${price} A$</div>
+                <div class="shop-item-owned">Adquired: ${owned}</div>
+            `;
+            
+            item.addEventListener('mousedown', function(e) {
+                if (e.button === 2) { // Right click
+                    sellItem(id);
+                } else {
+                    buyUpgrade(id, price, parseInt(income.match(/\d+/)[0]));
+                }
+                
+                // Update the shop display
+                openShop();
+            });
+            
+            container.appendChild(item);
+        }
+        
+        function openPointerShop() {
+            shopModal.style.display = 'none';
+            pointerShopModal.style.display = 'flex';
+            const container = document.getElementById('pointer-shop-items-container');
+            container.innerHTML = '';
+            
+            // Add crosshair item
+            const crosshairItem = document.createElement('div');
+            crosshairItem.className = 'shop-item';
+            crosshairItem.innerHTML = `
+                <img class="shop-item-img" src="img/puntero1.png" alt="Crosshair">
+                <div class="shop-item-name">Crosshair</div>
+                <div class="shop-item-price">+1 b$/click - 1000 A$</div>
+                <div class="shop-item-owned">Adquired: ${gameState.puntero1_adquiridos}</div>
+            `;
+            
+            crosshairItem.addEventListener('mousedown', function(e) {
+                if (e.button === 1) { // Middle click
+                    sellItem('puntero1');
+                } else {
+                    if (gameState.click >= 1000) {
+                        gameState.puntero1_adquirido = true;
+                        gameState.click -= 1000;
+                        gameState.puntero1_adquiridos += 1;
+                        updateUI();
+                    } else {
+                        alert("You don't have enough aula coins");
+                    }
+                }
+                
+                // Update the pointer shop display
+                openPointerShop();
+            });
+            
+            container.appendChild(crosshairItem);
+            
+            // Add Berges animation item
+            const bergesAnimItem = document.createElement('div');
+            bergesAnimItem.className = 'shop-item';
+            bergesAnimItem.innerHTML = `
+                <img class="shop-item-img" src="img/berges.png" alt="Animacion Berges">
+                <div class="shop-item-name">Animacion Berges</div>
+                <div class="shop-item-price">Haz que el berges gire 360°</div>
+                <div class="shop-item-owned">Velocidad: ${gameState.velocidad_angulo_variable}</div>
+            `;
+            
+            bergesAnimItem.addEventListener('click', function() {
+                if (!gameState.berges_gira_click) {
+                    if (gameState.click >= 1000) {
+                        gameState.berges_gira_click = true;
+                        gameState.click -= 1000;
+                        const speed = prompt("How fast do you want to rotate the berges?");
+                        if (speed && !isNaN(speed)) {
+                            gameState.velocidad_angulo_variable = parseInt(speed);
+                        }
+                        updateUI();
+                    } else {
+                        alert("You don't have enough aula coins");
+                    }
+                } else {
+                    const sell = confirm("Do you want to sell this animation?");
+                    if (sell) {
+                        gameState.berges_gira_click = false;
+                        gameState.click += 1000;
+                        gameState.velocidad_angulo_variable = 0;
+                        updateUI();
+                    } else {
+                        const speed = prompt("How fast do you want to rotate the berges?");
+                        if (speed && !isNaN(speed)) {
+                            gameState.velocidad_angulo_variable = parseInt(speed);
+                        }
+                    }
+                }
+                
+                // Update the pointer shop display
+                openPointerShop();
+            });
+            
+            container.appendChild(bergesAnimItem);
+        }
+        
+        function handleBonusCode(code) {
+            switch(code) {
+                case 'admingoat':
+                    if (!gameState.use_admin_goat) {
+                        alert("You have earned 999999 aula coins");
+                        gameState.click += 1000000;
+                        gameState.use_admin_goat = true;
+                    } else {
+                        alert("You have already used this bonus code");
+                    }
+                    break;
+                case 'albecas100':
+                    alert("Welcome albecas100");
+                    const goToAdmin = confirm("Do you want to go to the admin site?");
+                    if (goToAdmin) {
+                        adminSiteModal.style.display = 'flex';
+                    } else {
+                        alert("No worries, you can always come back here");
+                    }
+                    break;
+                case 'veteran':
+                    if (!gameState.use_beteran) {
+                        alert("Welcome veteran");
+                        gameState.click += 100000;
+                        alert("You have earned 100000 aula coins");
+                        alert("Thanks for playing again!!");
+                        gameState.use_beteran = true;
+                    } else {
+                        alert("You have already used this bonus code");
+                    }
+                    break;
+                case 'finish_game':
+                    if (!gameState.use_finish_game) {
+                        const confirmFinish = confirm("Do you really want to finish the game?");
+                        if (confirmFinish) {
+                            gameState.click += 10000000;
+                        } else {
+                            alert("Okay, enjoy the game");
+                        }
+                        gameState.use_finish_game = true;
+                    } else {
+                        alert("You have already used this bonus code");
+                    }
+                    break;
+                default:
+                    alert("Invalid code");
+            }
+            
+            bonusCodeModal.style.display = 'none';
+            updateUI();
+            checkMilestones();
+        }
+        
+        function showInfo() {
+            alert("This is Berges Game");
+            alert("A game similar to coockie clicker\nWhere all the upgrades are in form of the\nteachers of the school Aula Escola Europea");
+            alert("This Game was created by:\nalbecas100");
+            alert("You can find more information about the creator\nAt the official website");
+            alert("https://abecas10.github.io/portfolio/");
+            alert("Game created the 24th of January 2025");
+            alert(`Latest update: 12th of April 2025`);
+            alert("Thank you for playing!!");
+            window.open("https://abecas10.github.io/portfolio/");
+        }
+        
+        function saveGame() {
+            const confirmSave = confirm("Do you want to save the game?");
+            if (confirmSave) {
+                localStorage.setItem('bergesGameSave', JSON.stringify(gameState));
+                localStorage.setItem('playerName', gameState.playerName);
+                localStorage.setItem('alert_1_milion', gameState.alert_1_milion);
+                localStorage.setItem('the_end', gameState.the_end);
+                alert("Game saved");
+            }
+        }
+        
+        function loadGame() {
+            const savedGame = localStorage.getItem('bergesGameSave');
+            if (savedGame) {
+                const savedState = JSON.parse(savedGame);
+                Object.assign(gameState, savedState);
+                
+                // Load other saved data
+                gameState.alert_1_milion = localStorage.getItem('alert_1_milion') === 'true';
+                gameState.the_end = localStorage.getItem('the_end') === 'true';
+                
+                updateUI();
+            } else {
+                alert("No data to charge found");
+            }
+        }
+        
+        function deleteAllData() {
+            const confirmDelete = confirm("Do you want to delete all data?");
+            if (confirmDelete) {
+                localStorage.removeItem('bergesGameSave');
+                localStorage.removeItem('playerName');
+                localStorage.removeItem('alert_1_milion');
+                localStorage.removeItem('the_end');
+                alert("All data deleted");
+                location.reload();
+            }
+        }
+        
+        function checkMilestones() {
+            if (!gameState.the_end && gameState.click >= 10000000) {
+                alert("Wow...");
+                alert(`Hi ${gameState.playerName}!`);
+                alert("If you have reached me, it means that you had\na looooong journey");
+                alert(`Are you okay ${gameState.playerName}?`);
+                alert("Have you considered geting out of home?");
+                alert("anyways....");
+                alert("You have reached the end of the game!!!!");
+                alert("Congratulations!!!");
+                alert("Thanks for playing!!");
+                alert("I just have a last think to tell you before leaving");
+                alert("Try to play again with the bonus code veteran");
+                alert(`See you next time ${gameState.playerName}`);
+                alert("Bye");
+                alert("Game created by albecas100");
+                
+                gameState.the_end = true;
+                localStorage.setItem('the_end', 'true');
+                
+                const continuePlaying = confirm("The game has finished,\ndo you want to CONTINUE playing?");
+                if (!continuePlaying) {
+                    window.close();
+                }
+            }
+            
+            if (!gameState.alert_1_milion && gameState.click >= 1000000) {
+                gameState.alert_1_milion = true;
+                localStorage.setItem('alert_1_milion', 'true');
+                
+                alert("Wow...");
+                alert(`Hi ${gameState.playerName}!`);
+                alert("You have reached 1M aula coins!!!");
+                alert("Congratulations!!!");
+                alert("Thanks for playing!!");
+                alert("Now its time to tell you that this game finish at 10.000.000 aula coins");
+                alert(`So, good luck ${gameState.playerName}!!`);
+                alert("See you at 10.000.000 aula coins!!!");
+            }
+        }
+        
+        function playRandomMusic() {
+            if (!gameState.amusic) return;
+            
+            const musicFiles = ['musica1.mp3', 'musica2.mp3', 'musica3.mp3'];
+            const randomMusic = musicFiles[Math.floor(Math.random() * musicFiles.length)];
+            
+            music.src = randomMusic;
+            music.volume = gameState.volume;
+            music.play().catch(e => {
+                console.error("Error playing music:", e);
+            });
+            
+            music.onended = function() {
+                playRandomMusic();
+            };
+        }
+        
+        function gameLoop() {
+            // Passive income
+            const now = Date.now();
+            const stonks = 1 * gameState.buenosvinos_comprados + 
+                          5 * gameState.alemany_comprados + 
+                          50 * gameState.porqueres_comprados + 
+                          100 * gameState.duo_galactico_comprados +
+                          200 * gameState.romero_comprados +
+                          500 * gameState.ansorena_comprados +
+                          1000 * gameState.monge_comprados +
+                          2000 * gameState.buruaga_comprados +
+                          5000 * gameState.prat_comprados +
+                          12000 * gameState.chopinet_comprados +
+                          25000 * gameState.duo_historico_comprados;
+            
+            if (gameState.multiplicar_click_por_gb && now - gameState.last_time >= 1000) { // 2 minutes
+                gameState.click += stonks*2;
+                
+                // Check if golden berges bonus should expire
+                if (now - gameState.last_time_multiplicar >= 120000) { // 2 minutes
+                    gameState.multiplicar_click_por_gb = false;
+                    gameState.last_time_multiplicar = now;
+                }
+            } else if (now - gameState.last_time >= 1000) { // 1 second
+                gameState.click += stonks;
+                gameState.last_time = now;
+            }
+            
+            // Golden berges spawn
+            if (gameState.golden_berges_spawn) {
+                goldenBerges.style.display = 'block';
+                goldenBerges.style.left = `${gameState.gb_x}px`;
+                goldenBerges.style.top = `${gameState.gb_y}px`;
+                
+                if (now - gameState.last_time_gb >= 7000) { // 7 seconds
+                    gameState.last_time_gb = now;
+                    gameState.gb_x = Math.random() * (gameContainer.offsetWidth - 50);
+                    gameState.gb_y = Math.random() * (gameContainer.offsetHeight - 50);
+                    gameState.golden_berges_spawn = false;
+                    goldenBerges.style.display = 'none';
+                }
+            } else {
+                // Random chance to spawn golden berges
+                if (Math.random() < 0.0001) { // Adjust probability as needed
+                    gameState.golden_berges_spawn = true;
+                    gameState.gb_x = Math.random() * (gameContainer.offsetWidth - 50);
+                    gameState.gb_y = Math.random() * (gameContainer.offsetHeight - 50);
+                    gameState.last_time_gb = now;
+                }
+            }
+            
+            // Berges rotation animation
+            if (gameState.berges_animation) {
+                gameState.angulo += gameState.velocidad_angulo_variable;
+                if (gameState.angulo >= 360) {
+                    gameState.angulo = 0;
+                    gameState.berges_animation = false;
+                }
+                bergesImg.style.transform = `rotate(${gameState.angulo}deg)`;
+            }
+            
+            updateUI();
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // Disable context menu for right-click functionality
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+        
+        // Start with password check
+        passwordModal.style.display = 'flex';
+        document.body.classList.add('blur-background');
+    </script>
+</body>
+</html>
