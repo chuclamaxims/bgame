@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Berges Game</title>
+    <title>Inici</title>
+    <link rel="icon" href="img/icon.png" type="image/png">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,13 +16,13 @@
         }
 
         .blur-background #game-container {
-            filter: blur(20px);
+            display: none;
             transition: filter 0.3s ease;
         }
         
         #password-modal {
-            backdrop-filter: blur(3px);
-            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(100000000px);
+            background-color: rgb(255, 255, 255);
         }
         
         #game-container {
@@ -164,13 +165,10 @@
             height: 100%;
             background-color: rgba(0, 0, 0, 0.8);
             z-index: 100;
-            justify-content: center;
-            align-items: center;
             backdrop-filter: blur(2px);
         }
         
         .modal-content {
-            background-color: #333;
             padding: 20px;
             border-radius: 10px;
             max-width: 500px;
@@ -179,9 +177,9 @@
         }
         
         .modal-title {
-            font-size: 24px;
+            font-size: 15px;
             margin-bottom: 20px;
-            color: #ff0000;
+            color: #000000;
         }
         
         .shop-item {
@@ -275,16 +273,20 @@
         .settings-option:hover {
             background-color: #555;
         }
+        #password-input {
+            border: #ffffff;
+            margin-left: 300px;
+            margin-top: 100px;
+        }
     </style>
 </head>
 <body>
     <!-- Password Modal -->
     <div id="password-modal" class="modal">
+        <p class="modal-title">Unable to load content</p>
         <div class="modal-content">
-            <h2>Enter Password</h2>
             <form id="password-form">
-                <input type="password" id="password-input" placeholder="Password">
-                <button type="submit" id="password-submit">Submit</button>
+                <input type="password" id="password-input">
             </form>
         </div>
     </div>
@@ -530,6 +532,10 @@
             if (esValida) {
                 passwordModal.style.display = 'none';
                 document.body.classList.remove('blur-background');
+                alert("Al entrar al juego, estas haceptando nuestros terminos y condiciones");
+                if (confirm("Quieres ver los terminos y condiciones?")) {
+                    window.open("https://chuclamaxims.github.io/terms/", "_blank");
+                }
                 initGame();
             } else {
                 alert("Contraseña incorrecta");
@@ -556,7 +562,6 @@
                 gameState.playerName = localStorage.getItem('playerName');
             }
             
-            alert("Click Berges and buy upgrades!!");
             
             // Start music
             playRandomMusic();
@@ -1031,15 +1036,6 @@
                         alert("You have already used this bonus code");
                     }
                     break;
-                case 'albecas100':
-                    alert("Welcome albecas100");
-                    const goToAdmin = confirm("Do you want to go to the admin site?");
-                    if (goToAdmin) {
-                        adminSiteModal.style.display = 'flex';
-                    } else {
-                        alert("No worries, you can always come back here");
-                    }
-                    break;
                 case 'veteran':
                     if (!gameState.use_beteran) {
                         alert("Welcome veteran");
@@ -1076,13 +1072,12 @@
         function showInfo() {
             alert("This is Berges Game");
             alert("A game similar to coockie clicker\nWhere all the upgrades are in form of the\nteachers of the school Aula Escola Europea");
-            alert("This Game was created by:\nalbecas100");
-            alert("You can find more information about the creator\nAt the official website");
-            alert("https://abecas10.github.io/portfolio/");
+            alert("You can find the terms and conditions here:");
+            alert("https://chuclamaxims.github.io/terms/");
             alert("Game created the 24th of January 2025");
-            alert(`Latest update: 12th of April 2025`);
+            alert(`Latest update: 18th of May 2025`);
             alert("Thank you for playing!!");
-            window.open("https://abecas10.github.io/portfolio/");
+            window.open("https://chuclamaxims.github.io/terms/");
         }
         
         function saveGame() {
