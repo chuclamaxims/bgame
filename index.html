@@ -580,19 +580,6 @@
                 }
             });
             
-            // Space bar click
-            document.addEventListener('keydown', function(e) {
-                if (e.code === 'Space') {
-                    addClick(1 + gameState.puntero1_adquiridos);
-                    if (gameState.berges_gira_click) {
-                        gameState.berges_animation = true;
-                    }
-                    if (gameState.asound) {
-                        punchSound.currentTime = 0;
-                        punchSound.play();
-                    }
-                }
-            });
             
             // Upgrade clicks
             buenosvinosImg.addEventListener('mousedown', function(e) {
